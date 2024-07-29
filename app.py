@@ -24,7 +24,7 @@ from phi.tools.duckduckgo import DuckDuckGo   #to search the web
 from phi.embedder.openai import OpenAIEmbedder
 from phi.vectordb.pgvector import PgVector2  #to store the embedddinngs
 from phi.storage.assistant.postgres import PgAssistantStorage  #to store the history
-import psycopg
+import psycopg2
 import os
 from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
@@ -45,7 +45,7 @@ def setup_assistant(llm: str) -> Assistant:
             vector_db=PgVector2(
                 db_url=db_url,
                 collection="auto_rag_documents_openai",
-                embedder=OpenAIEmbedder(model="text-embedding-3-small",api_key='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', dimensions=1536),
+                embedder=OpenAIEmbedder(model="text-embedding-3-small",api_key = os.getenv('OPENAI_API_KEY'), dimensions=1536),
             ),
             num_documents=3,
         ),
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     assistant = setup_assistant(llm)
     sample_pdf_path = "sample.pdf"
     add_document_to_kb(assistant, sample_pdf_path, file_type="pdf")
-    query = "Which team won IPL 2024?"
+    query = "What is the main topic of the document?"
     response = query_assistant(assistant, query)
     print("Query:", query)
     print("Response:", response)
